@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package com.inomera.pims.sal.pex;
+
+message SendSmsProcessMessageRequest{
+  string serviceKey = 1;
+  string smsHeader = 2;
+  string msgTxt = 3;
+  string receiverMsisdn = 4;
+  string txKey = 5;
+}
+message SendSmsProcessMessageResponse{
+  string msgKey = 1;
+}
+
+
+service ProcessExecutorService{
+  rpc sendSms(SendSmsProcessMessageRequest) returns (SendSmsProcessMessageResponse) {};
+}

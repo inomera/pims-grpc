@@ -1,0 +1,17 @@
+@startuml
+title "Async flow grpc"
+
+siege -> ws: send sms
+activate ws #FFBBBB
+
+ws -> siege: response with txId
+deactivate siege
+
+ws --> msg: << sendSms request>>
+activate msg
+
+msg --> ws: sendSms Response
+deactivate msg
+deactivate ws
+
+@enduml

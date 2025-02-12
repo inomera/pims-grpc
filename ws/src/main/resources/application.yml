@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: ws
+  grpc:
+    client:
+      default-channel:
+        negotiation-type: plaintext
+        enable-keep-alive: true
+        health:
+          enabled: true
+        default-load-balancing-policy: round_robin
+        idle-timeout: 60s
+        keep-alive-time: 5m
+        keep-alive-timeout: 60s
+        keep-alive-without-calls: false
+        secure: false
+        ssl:
+          enabled: false
+        user-agent: ws-grpc
+      channels:
+        pex:
+          address: localhost:9091
+        msg:
+          address: localhost:9090
+server:
+  port: 8080
+  tomcat:
+    accept-count: 400
+    threads:
+      max: 400
+    max-connections: 8192
+logging:
+  config: classpath:log4j2.xml

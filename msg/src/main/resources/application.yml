@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: msg
+  grpc:
+    server:
+      port: 9090
+      exception-handling:
+        enabled: true
+
+logging:
+  config: classpath:log4j2.xml
+  level:
+    io:
+      grpc: DEBUG
+      netty: DEBUG

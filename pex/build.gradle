@@ -1,0 +1,68 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.4.2'
+    id 'io.spring.dependency-management' version '1.1.7'
+    id 'com.google.protobuf' version '0.9.4'
+}
+
+group = 'com.inomera.pims'
+version = '0.0.1'
+sourceCompatibility = JavaVersion.VERSION_23
+targetCompatibility = JavaVersion.VERSION_23
+
+repositories {
+    mavenCentral()
+    maven { url = 'https://plugins.gradle.org/m2/' }
+    mavenLocal()
+}
+
+configurations {
+    all*.exclude group: "org.springframework.boot", module: "spring-boot-starter-tomcat"
+    all*.exclude group: "junit", module: "junit"
+    all*.exclude group: "org.springframework.boot", module: "spring-boot-starter-logging"
+    all*.exclude group: "ch.qos.logback", module: "logback-classic"
+    all*.exclude group: "ch.qos.logback", module: "logback-core"
+    all*.exclude group: "org.junit.vintage", module: "junit-vintage-engine"
+}
+
+dependencies {
+    //  Development mode on!
+    implementation project(':sal')
+
+    //  Test,Production mode on!
+    //  implementation 'com.inomera.pims:sal:0.0.1'
+    //  Test,Production mode on!
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'io.grpc:grpc-services'
+    implementation 'org.springframework.grpc:spring-grpc-spring-boot-starter'
+    implementation "org.springframework.boot:spring-boot-starter-log4j2"
+
+    implementation 'org.apache.logging.log4j:log4j-slf4j2-impl:2.24.1'
+    implementation 'org.apache.logging.log4j:log4j-api:2.24.3'
+    implementation 'org.apache.logging.log4j:log4j-to-jul:2.24.1'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+    compileOnly 'org.projectlombok:lombok:1.18.34'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    annotationProcessor 'org.projectlombok:lombok:1.18.34'
+
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.grpc:spring-grpc-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.grpc:spring-grpc-dependencies:${springGrpcVersion}"
+    }
+}
+
+tasks.named('bootJar') {
+    enabled = true
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

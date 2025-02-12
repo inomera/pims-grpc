@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package com.inomera.pims.sal.msg;
+
+message SendCustomerAcknowledgeMessageRequest{
+  string smsHeader = 1;
+  string msgTxt = 2;
+  string receiverMsisdn = 3;
+  string txKey = 4;
+}
+message SendCustomerAcknowledgeMessageResponse{
+  string msgKey = 1;
+}
+
+
+service MessagingService{
+  rpc sendCustomerAcknowledgeMsg(SendCustomerAcknowledgeMessageRequest) returns (SendCustomerAcknowledgeMessageResponse) {};
+}

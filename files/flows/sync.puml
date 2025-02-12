@@ -1,0 +1,10 @@
+@startuml
+title "Sync flow grpc"
+autonumber
+siege -> ws : SendSmsProcess Request
+ws -> pex : SendSmsProcess Request
+pex -> msg : SendSmsProcess Request
+msg -> pex : SendSmsProcess Request
+ws -> pex : SendSmsProcess Request
+siege <- ws : SendSmsProcess Response
+@enduml

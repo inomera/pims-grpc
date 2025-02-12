@@ -1,0 +1,8 @@
+rootProject.name = 'pims-grpc'
+
+include 'ws'
+include 'pex'
+include 'msg'
+include 'domain'
+include 'sal'
+

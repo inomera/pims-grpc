@@ -1,0 +1,103 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'com.google.protobuf' version '0.9.4'
+    id 'org.springframework.boot' version '3.4.2'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.inomera.pims'
+version = '0.0.1'
+sourceCompatibility = JavaVersion.VERSION_23
+targetCompatibility = JavaVersion.VERSION_23
+
+repositories {
+    mavenCentral()
+    maven { url = 'https://plugins.gradle.org/m2/' }
+    mavenLocal()
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.grpc:spring-grpc-dependencies:${springGrpcVersion}"
+    }
+}
+
+dependencies {
+    api 'io.grpc:grpc-netty-shaded:1.70.0'
+    api 'io.grpc:grpc-protobuf:1.70.0'
+    api 'io.grpc:grpc-stub:1.70.0'
+    api 'io.grpc:grpc-servlet-jakarta:1.70.0'
+    api 'jakarta.annotation:jakarta.annotation-api:3.0.0'
+    api "org.springframework.grpc:spring-grpc-spring-boot-starter"
+    api 'org.apache.commons:commons-lang3:3.17.0'
+    api "org.springframework.boot:spring-boot-starter-log4j2"
+    api "org.springframework.boot:spring-boot-starter-aop"
+
+    implementation 'org.apache.logging.log4j:log4j-slf4j2-impl:2.24.1'
+    implementation 'org.apache.logging.log4j:log4j-api:2.24.3'
+    implementation 'org.apache.logging.log4j:log4j-to-jul:2.24.1'
+
+    compileOnly 'org.projectlombok:lombok:1.18.34'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    annotationProcessor 'org.projectlombok:lombok:1.18.34'
+
+    testImplementation platform('org.junit:junit-bom:5.9.1')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:3.25.5"
+    }
+    plugins {
+        grpc {
+            artifact = 'io.grpc:protoc-gen-grpc-java:1.70.0'
+        }
+    }
+    generateProtoTasks {
+        all()*.plugins {
+            grpc {
+                option 'jakarta_omit'
+                option '@generated=omit'
+            }
+        }
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
+
+
+tasks.register('sourceJar', Jar) {
+    duplicatesStrategy = 'include'
+    archiveClassifier = 'sources'
+    from sourceSets.main.allJava
+}
+
+tasks.named('bootJar') {
+    enabled = false
+}
+tasks.named('jar') {
+    enabled = true
+}
+
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = "${project.group}"
+            artifactId = "${project.name}"
+            version = "${project.version}"
+
+            from components.java
+            artifact tasks.sourceJar
+        }
+    }
+}
+
+tasks.generatePomFileForMavenJavaPublication {
+    destination = file("${project.projectDir}/build/publications/mavenJava/${project.name}-${project.version}.pom")
+}

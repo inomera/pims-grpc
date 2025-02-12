@@ -46,7 +46,7 @@ This project serves as a practical implementation of **gRPC within a Spring Boot
 ![Async flow](files/flows/async.png)
 
 
-### Load Testing
+### Testing
 
 MacOS
 

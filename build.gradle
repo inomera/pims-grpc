@@ -3,34 +3,54 @@ buildscript {
         mavenLocal()
         mavenCentral()
         maven { url = 'https://plugins.gradle.org/m2/' }
+        maven { url 'https://repo.spring.io/milestone' }
+        maven { url 'https://repo.spring.io/snapshot' }
+        gradlePluginPortal()
     }
     ext {
-        projectVersion = '1.0.0'
+        grpcVersion = '1.70.0'
+        springBootVersion = '3.4.2'
+        springGrpcVersion = '0.4.0-SNAPSHOT'
 
-        grpcVersion = '1.69.0'
-
-        guavaVersion = '33.2.1-jre'
-        protobufVersion = '3.25.3'
+        protobufVersion = '4.29.3'
         protobufGradlePluginVersion = '0.9.4'
 
-        springBootVersion = '3.4.2'
+        guavaVersion = '33.2.1-jre'
 
         lombokPluginVersion = '8.6'
         versioningPluginVersion = '3.1.0'
         versionsPluginVersion = '0.51.0'
-
-        springGrpcVersion =  '0.3.0'
     }
 }
 
 plugins {
     id 'java'
-    id 'org.springframework.boot' version "${springBootVersion}"
     id 'io.spring.dependency-management' version '1.1.7'
-    id 'com.google.protobuf' version "${protobufGradlePluginVersion}"
-    id 'java-library'
-    id 'net.nemerosa.versioning' version "${versioningPluginVersion}"
-    id 'io.freefair.lombok' version "${lombokPluginVersion}" apply false
-    id 'com.github.ben-manes.versions' version "${versionsPluginVersion}"
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'io.spring.dependency-management'
+
+    dependencyManagement {
+        imports {
+            mavenBom "org.springframework.grpc:spring-grpc-dependencies:$springGrpcVersion"
+        }
+        dependencies {
+            dependency "com.google.protobuf:protobuf-java:$protobufVersion"
+            dependency "com.google.protobuf:protobuf-java-util:$protobufVersion"
+        }
+    }
+
+    configurations.configureEach {
+        resolutionStrategy {
+            resolutionStrategy.forcedModules = ["com.google.protobuf:protobuf-java:$protobufVersion",
+                                                "com.google.protobuf:protobuf-java-util:$protobufVersion"]
+        }
+    }
+
+    repositories {
+        mavenCentral()
+    }
 }
 

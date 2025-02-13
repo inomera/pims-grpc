@@ -62,7 +62,7 @@ grpcurl -v -d '{"smsHeader": "1234", "msgTxt":"Hello pims" , "receiverMsisdn" : 
 
 #### REST API
 
-Sync
+Async
 
 ```curl
 curl --location 'http://localhost:8080/ws/rest/external/v10/messages/send/async' 
@@ -75,7 +75,7 @@ curl --location 'http://localhost:8080/ws/rest/external/v10/messages/send/async'
 }'
 ```
 
-Async
+Sync
 
 ```curl
 curl --location 'http://localhost:8080/ws/rest/external/v10/messages/send/process' 
@@ -98,7 +98,7 @@ brew install siege
 
 you can find siege files under files directory.
 
-concurrent 5 users, no delay, ten seconds
+concurrent 5 users, no delay, 30 seconds
 
 ```bash
 #!/bin/bash
@@ -131,6 +131,7 @@ Shortest transaction:	        0.00
 ### Tech Stack
 
 * Spring Boot 3.4.2
+* Spring GRPC Boot 0.4.0-SHAPSHOT
 * GRPC 1.7.0
 * Apache Tomcat 10+
 * Protobuf

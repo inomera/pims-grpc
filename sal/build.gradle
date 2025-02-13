@@ -1,8 +1,9 @@
 plugins {
+    id 'java'
     id 'java-library'
     id 'maven-publish'
-    id 'com.google.protobuf' version '0.9.4'
-    id 'org.springframework.boot' version '3.4.2'
+    id 'com.google.protobuf' version "${protobufGradlePluginVersion}"
+    id 'org.springframework.boot' version "${springBootVersion}"
     id 'io.spring.dependency-management' version '1.1.7'
 }
 
@@ -17,26 +18,17 @@ repositories {
     mavenLocal()
 }
 
-dependencyManagement {
-    imports {
-        mavenBom "org.springframework.grpc:spring-grpc-dependencies:${springGrpcVersion}"
-    }
-}
-
 dependencies {
-    api 'io.grpc:grpc-netty-shaded:1.70.0'
-    api 'io.grpc:grpc-protobuf:1.70.0'
-    api 'io.grpc:grpc-stub:1.70.0'
-    api 'io.grpc:grpc-servlet-jakarta:1.70.0'
     api 'jakarta.annotation:jakarta.annotation-api:3.0.0'
     api "org.springframework.grpc:spring-grpc-spring-boot-starter"
-    api 'org.apache.commons:commons-lang3:3.17.0'
+    api "io.grpc:grpc-netty-shaded:${grpcVersion}"
+    modules {
+        module("io.grpc:grpc-netty") {
+            replacedBy("io.grpc:grpc-netty-shaded", "Use Netty shaded instead of regular Netty")
+        }
+    }
     api "org.springframework.boot:spring-boot-starter-log4j2"
-    api "org.springframework.boot:spring-boot-starter-aop"
-
-    implementation 'org.apache.logging.log4j:log4j-slf4j2-impl:2.24.1'
-    implementation 'org.apache.logging.log4j:log4j-api:2.24.3'
-    implementation 'org.apache.logging.log4j:log4j-to-jul:2.24.1'
+    api 'org.apache.commons:commons-lang3:3.17.0'
 
     compileOnly 'org.projectlombok:lombok:1.18.34'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
@@ -46,14 +38,23 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter'
 }
 
-
 protobuf {
     protoc {
-        artifact = "com.google.protobuf:protoc:3.25.5"
+        artifact = "com.google.protobuf:protoc:${protobufVersion}"
+    }
+    generateProtoTasks {
+        all().configureEach {
+            it.builtins {
+                java {}
+            }
+        }
+    }
+    processResources {
+        duplicatesStrategy = 'include'
     }
     plugins {
         grpc {
-            artifact = 'io.grpc:protoc-gen-grpc-java:1.70.0'
+            artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}"
         }
     }
     generateProtoTasks {
@@ -83,7 +84,6 @@ tasks.named('bootJar') {
 tasks.named('jar') {
     enabled = true
 }
-
 
 publishing {
     publications {
